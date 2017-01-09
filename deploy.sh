@@ -8,6 +8,11 @@ if [ -z "$REGION" ]; then
 else
   echo "S3 region set as $REGION"
 fi
+if [ -z "$BUILD_FOLDER" ]; then
+  echo "Build folder is not set, using ./build" && BUILD_FOLDER="build"
+else
+  echo "Build folder is $BUILD_FOLDER"
+fi
 
 }
 
@@ -20,7 +25,7 @@ echo "Deploying build to S3 bucket $BUCKET"
 if [ "$NO_ROBOTS" = "true" ]; then
 	dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 	echo "No robots flag set for this deployment, deploying no robots configuration"
-	cp "$dir"/norobots.txt "$PWD"/build/robots.txt
+	cp "$dir"/norobots.txt "$PWD"/"$BUILD_FOLDER"/robots.txt
 fi
 
 aws s3 sync "$PWD"/build s3://"$BUCKET" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY
