@@ -30,11 +30,11 @@ function deploy {
         cp "$dir"/norobots.txt "$PWD"/"$BUILD_FOLDER"/robots.txt
     fi
 
-    aws s3 sync "$PWD"/build s3://"$BUCKET" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY
+    aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY
 
     #Clean no robots text file
     if [ "$NO_ROBOTS" = "true" ]; then
-        rm "$PWD"/$BUILD_FOLDER/robots.txt
+        rm "$PWD"/"$BUILD_FOLDER"/robots.txt
     fi
 }
 
