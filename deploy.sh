@@ -1,4 +1,5 @@
 #! /bin/bash
+
 echo "Deploying..."
 
 function verify {
@@ -33,7 +34,7 @@ function deploy {
 
     #Clean no robots text file
     if [ "$NO_ROBOTS" = "true" ]; then
-        rm "$PWD"/build/robots.txt
+        rm "$PWD"/$BUILD_FOLDER/robots.txt
     fi
 }
 
