@@ -1,51 +1,80 @@
 #!/bin/bash
 
+#Exit on error
+set -oe pipefail
+
 if [[ -n $(git status --porcelain) ]]; then
     echo "Repo is dirty" && \
     echo "Please stash or commit your changes before releasing" && \
     exit 1;
 fi
 
+function switch_to() {
+    echo "Switching to $1"
+    git checkout --quiet $1
+}
+
+function update() {
+    switch_to $1
+    echo "Pulling latest $1"
+    git pull --rebase --quiet
+}
+
+function merge_release_to() {
+   switch_to $1
+   echo "Merging release to $1"
+   git merge --quiet --no-edit --no-ff $releaseBranch
+}
+
+
 # current Git branch
 branch=$(git rev-parse --abbrev-ref HEAD)
-echo $branch
 
-exit 0
-
-# v1.0.0, v1.5.2, etc.
-versionLabel=v$1
+# major|minor|patch
+newVersion=$1
+[ -z $1 ] && echo "Please speficy version (major|minor|patch)" && exit 1
 
 # establish branch and tag name variables
-devBranch=develop
-masterBranch=master
-releaseBranch=release-$versionLabel
+devBranch="develop"
+masterBranch="master"
 
-# create the release branch from the -develop branch
-git checkout -b $releaseBranch $devBranch
+#Fetch remote trackers for releasing
+echo "Fetching remote branches (git fetch)"
+git fetch --quiet
 
-# file in which to update version number
-versionFile="version.txt"
+update $devBranch
 
-# find version number assignment ("= v1.5.5" for example)
-# and replace it with newly specified version number
-sed -i.backup -E "s/\= v[0-9.]+/\= $versionLabel/" $versionFile $versionFile
+#Bump version up
+version=$(npm version "$1" --no-git-tag-version)
+echo "Bumped version to $version"
+releaseBranch="release/$version"
 
-# remove backup file created by sed command
-rm $versionFile.backup
+# create the release branch from develop branch
+echo "Creating release branch $releaseBranch from $devBranch"
+git checkout --quiet -b $releaseBranch
 
 # commit version number increment
-git commit -am "Incrementing version number to $versionLabel"
+git commit -am "$version"
 
-# merge release branch with the new version number into master
-git checkout $masterBranch
-git merge --no-ff $releaseBranch
+update $masterBranch
+merge_release_to $masterBranch
 
 # create tag for new version from -master
-git tag $versionLabel
+git tag $version
+echo "Tagging $version as stable"
+git tag --force stable $version
 
-# merge release branch with the new version number back into develop
-git checkout $devBranch
-git merge --no-ff $releaseBranch
+merge_release_to $devBranch
 
 # remove release branch
 git branch -d $releaseBranch
+
+#Atomic ensures nothing is pushed if any of the repos fails to push
+git push --atomic origin $devBranch $masterBranch $version
+
+git push --force origin stable # Update stable tag
+
+#switch back to branch you started
+switch_to $branch
+
+
