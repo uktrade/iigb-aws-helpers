@@ -37,6 +37,7 @@ newVersion=$1
 # establish branch and tag name variables
 devBranch="develop"
 masterBranch="master"
+stableBranch="stable"
 
 #Fetch remote trackers for releasing
 echo "Fetching remote branches (git fetch)"
@@ -61,20 +62,20 @@ merge_release_to $masterBranch
 
 # create tag for new version from -master
 git tag $version
-echo "Tagging $version as stable"
-git tag --force stable $version
 
 merge_release_to $devBranch
-
 # remove release branch
 git branch -d $releaseBranch
 
+
+echo "Updating $stableBranch branch to point $version"
+switch_to $stableBranch
+git reset --hard $version
+
 #Atomic ensures nothing is pushed if any of the repos fails to push
 git push --atomic origin $devBranch $masterBranch $version
-
 git push --force origin stable # Update stable tag
 
 #switch back to branch you started
 switch_to $branch
-
 
