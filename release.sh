@@ -70,7 +70,7 @@ git branch -d $releaseBranch
 
 echo "Updating $stableBranch branch to point $version"
 switch_to $stableBranch
-git reset --hard $version
+git reset --hard "refs/tags/$version"
 
 #Atomic ensures nothing is pushed if any of the repos fails to push
 git push --atomic origin $devBranch $masterBranch $version
