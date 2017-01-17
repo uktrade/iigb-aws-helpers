@@ -5,8 +5,8 @@
 
 
 [ -z "$DID" ] && \
-echo "[ERROR] DID variable must be specified as a comma separated distribution id list for caches to be invalidated" && \
-exit 1
+echo "Skipping cache invalidation as DID variable is not provided" && \
+exit 0
 
 #AWS CLI support for this service is only available in a preview stage.
 aws configure set preview.cloudfront true
