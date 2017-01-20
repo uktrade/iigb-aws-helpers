@@ -30,7 +30,11 @@ function deploy {
         cp "$dir"/norobots.txt "$PWD"/"$BUILD_FOLDER"/robots.txt
     fi
 
-    aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY
+    aws s3 sync "$PWD"/"${BUILD_FOLDER}/assets" s3://"${BUCKET}/assets" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --recursive --cache-control max-age=604800
+
+    aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --exclude 'assets/*' --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --recursive --cache-control max-age=1800
+
+
 
     #Clean no robots text file
     if [ "$NO_ROBOTS" = "true" ]; then
