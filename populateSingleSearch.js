@@ -11,10 +11,10 @@ var enquiriesFolder = '/enquiries/';
 var termsFolder = '/terms-and-conditions/';
 var privacyFolder = '/privacy-policy/';
 
-var searchDomain = process.env.AWS_CS_SEARCH_STAGING;
-var uploadDomain = process.env.AWS_CS_UPLOAD_STAGING;
-var aws_access_key = process.env.AWS_ACCESS_KEY_STAGING;
-var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY_STAGING;
+var searchDomain = process.env.AWS_CS_SEARCH;
+var uploadDomain = process.env.AWS_CS_UPLOAD;
+var aws_access_key = process.env.AWS_ACCESS_KEY_ID_IIGB_SEARCH_UPDATER;
+var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY_IIGB_SEARCH_UPDATER;
 
 
 AWS.config.apiVersions = {
@@ -110,15 +110,6 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(createJson, 'pt'),
-			async.apply(getDatafromFile, 'pt'),
-			async.apply(uploadNewIndex, 'pt'),
-		], function(err, result) {
-			console.log(result);
-		});
-	},
-	function(callback) {
-		async.waterfall([
 			async.apply(createJson, 'us'),
 			async.apply(getDatafromFile, 'us'),
 			async.apply(uploadNewIndex, 'us'),
@@ -136,13 +127,13 @@ async.parallel([
 });
 
 
-function createJson(language, callback) {
+function createJson(market, callback) {
 	//create temp directory
-	fileHelper.createDirectories(language);
+	fileHelper.createDirectories(market);
 
 
-	var child = exec("cs-import-documents --access-key " + aws_access_key + "  --secret-key " + aws_secret_key + " --source " + path + language + "/*/*/*/*/*.html " +
-		path + language + "/*/*/*/*.html " + path + language + "/*/*/*.html " + path + language + "/*/*.html  --output /tmp/" + language + " --verbose");
+	var child = exec("cs-import-documents --access-key " + aws_access_key + "  --secret-key " + aws_secret_key + " --source " + path + market + "/*/*/*/*/*.html " +
+		path + market + "/*/*/*/*.html " + path + market + "/*/*/*.html " + path + market + "/*/*.html  --output /tmp/" + market + " --verbose");
 
 	child.stdout.on('data', function(data) {
 		console.log('stdout: ' + data);
@@ -156,8 +147,8 @@ function createJson(language, callback) {
 	});
 }
 
-function getDatafromFile(language, callback) {
-	fs.readFile('/tmp/' + language + '/1.json', 'utf8', function(err, data) {
+function getDatafromFile(mar, callback) {
+	fs.readFile('/tmp/' + mar + '/1.json', 'utf8', function(err, data) {
 		if (err) {
 			callback(err);
 		} else {
@@ -167,61 +158,55 @@ function getDatafromFile(language, callback) {
 	});
 }
 
-function uploadNewIndex(language, newdata, callback) {
+function uploadNewIndex(market, newdata, callback) {
 
 	var formattedData = prepareBatch(newdata);
 
 	var indexedData = addTimestamp(formattedData);
 
-	if (language == 'br') {
+	if (market == 'br') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for br");
 			callback(null, data);
 		});
-	} else if (language == 'cn') {
+	} else if (market == 'cn') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for cn");
 			callback(null, data);
 		});
-	} else if (language == 'de') {
+	} else if (market == 'de') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for de");
 			callback(null, data);
 		});
-	} else if (language == 'es') {
+	} else if (market == 'es') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for es");
 			callback(null, data);
 		});
-	} else if (language == 'in') {
+	} else if (market == 'in') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for in");
 			callback(null, data);
 		});
-	} else if (language == 'int') {
+	} else if (market == 'int') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for int");
 			callback(null, data);
 		});
-	} else if (language == 'jp') {
+	} else if (market == 'jp') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for jp");
 			callback(null, data);
 		});
-	} else if (language == 'pt') {
-		csdUpload.uploadDocuments(indexedData, function(err, data) {
-			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done adding new index for pt");
-			callback(null, data);
-		});
-	} else if (language == 'us') {
+	} else if (market == 'us') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for us");

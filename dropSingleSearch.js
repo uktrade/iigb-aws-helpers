@@ -7,10 +7,10 @@ var async = require('async');
 
 var path = process.argv[2];
 
-var searchDomain = process.env.AWS_CS_SEARCH_STAGING;
-var uploadDomain = process.env.AWS_CS_UPLOAD_STAGING;
-var aws_access_key = process.env.AWS_ACCESS_KEY_STAGING;
-var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY_STAGING;
+var searchDomain = process.env.AWS_CS_SEARCH;
+var uploadDomain = process.env.AWS_CS_UPLOAD;
+var aws_access_key = process.env.AWS_ACCESS_KEY_ID_IIGB_SEARCH_UPDATER;
+var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY_IIGB_SEARCH_UPDATER;
 
 
 AWS.config.apiVersions = {
@@ -43,7 +43,7 @@ var csdSearch = new AWS.CloudSearchDomain({
 async.parallel([
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'br'),
+			async.apply(getLatestDataByMarket, 'br'),
 			async.apply(removeData, 'br')
 		], function(err, result) {
 			console.log(result);
@@ -51,7 +51,7 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'cn'),
+			async.apply(getLatestDataByMarket, 'cn'),
 			async.apply(removeData, 'cn')
 		], function(err, result) {
 			console.log(result);
@@ -59,7 +59,7 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'de'),
+			async.apply(getLatestDataByMarket, 'de'),
 			async.apply(removeData, 'de')
 		], function(err, result) {
 			console.log(result);
@@ -67,7 +67,7 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'es'),
+			async.apply(getLatestDataByMarket, 'es'),
 			async.apply(removeData, 'es')
 		], function(err, result) {
 			console.log(result);
@@ -75,7 +75,7 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'in'),
+			async.apply(getLatestDataByMarket, 'in'),
 			async.apply(removeData, 'in')
 		], function(err, result) {
 			console.log(result);
@@ -83,7 +83,7 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'int'),
+			async.apply(getLatestDataByMarket, 'int'),
 			async.apply(removeData, 'int')
 		], function(err, result) {
 			console.log(result);
@@ -91,7 +91,7 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'jp'),
+			async.apply(getLatestDataByMarket, 'jp'),
 			async.apply(removeData, 'jp')
 		], function(err, result) {
 			console.log(result);
@@ -99,7 +99,7 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'pt'),
+			async.apply(getLatestDataByMarket, 'pt'),
 			async.apply(removeData, 'pt')
 		], function(err, result) {
 			console.log(result);
@@ -107,7 +107,7 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'us'),
+			async.apply(getLatestDataByMarket, 'us'),
 			async.apply(removeData, 'us')
 		], function(err, result) {
 			console.log(result);
@@ -121,13 +121,14 @@ async.parallel([
 	}
 });
 
-function getLatestDatabyLanguage(language, callback) {
+function getLatestDataByMarket(market, callback) {
 	var searchParams = {
-		query: "(and (term field=language '" + language + "'))",
+		//TODO country
+		query: "(and (term field=country '" + market + "'))",
 		queryParser: 'structured',
 		size: 10000,
 	};
-	if (language == 'br') {
+	if (market == 'br') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -135,7 +136,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'cn') {
+	} else if (market == 'cn') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -143,7 +144,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'es') {
+	} else if (market == 'es') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -151,7 +152,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'de') {
+	} else if (market == 'de') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -159,7 +160,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'in') {
+	} else if (market == 'in') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -167,7 +168,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'int') {
+	} else if (market == 'int') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -175,7 +176,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'js') {
+	} else if (market == 'jp') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -183,15 +184,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'pt') {
-		csdSearch.search(searchParams, function(err, data) {
-			if (err) {
-				console.log(err, err.stack);
-			} else {
-				callback(null, data.hits.hit);
-			}
-		});
-	} else if (language == 'us') {
+	} else if (market == 'us') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -248,12 +241,6 @@ function removeData(language, data, callback) {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done dropping jp");
-			callback(null, data);
-		});
-	} else if (language == 'pt') {
-		csdUpload.uploadDocuments(batch, function(err, data) {
-			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done dropping pt");
 			callback(null, data);
 		});
 	} else if (language == 'us') {
