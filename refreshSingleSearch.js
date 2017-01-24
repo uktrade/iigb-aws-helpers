@@ -12,10 +12,10 @@ var enquiriesFolder = '/enquiries/';
 var termsFolder = '/terms-and-conditions/';
 var privacyFolder = '/privacy-policy/';
 
-var searchDomain = process.env.AWS_CS_SEARCH;
-var uploadDomain = process.env.AWS_CS_UPLOAD;
-var aws_access_key = process.env.AWS_ACCESS_KEY;
-var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY;
+var searchDomain = process.env.AWS_CS_SEARCH_STAGING;
+var uploadDomain = process.env.AWS_CS_UPLOAD_STAGING;
+var aws_access_key = process.env.AWS_ACCESS_KEY_STAGING;
+var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY_STAGING;
 
 
 AWS.config.apiVersions = {
@@ -245,7 +245,7 @@ function uploadNewIndex(language, newdata, callback) {
 	} else if (language == 'pt') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("added new jp data to index");
+			else console.log("added new pt data to index");
 			callback(null, version);
 		});
 	} else if (language == 'us') {

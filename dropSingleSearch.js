@@ -208,7 +208,7 @@ function removeData(language, data, callback) {
 	} else if (language == 'es') {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done dropping us");
+			else console.log("done dropping es");
 			callback(null, data);
 		});
 	} else if (language == 'in') {
@@ -226,19 +226,19 @@ function removeData(language, data, callback) {
 	} else if (language == 'jp') {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done dropping int");
+			else console.log("done dropping jp");
 			callback(null, data);
 		});
 	} else if (language == 'pt') {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done dropping int");
+			else console.log("done dropping pt");
 			callback(null, data);
 		});
 	} else if (language == 'us') {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done dropping int");
+			else console.log("done dropping us");
 			callback(null, data);
 		});
 	}
