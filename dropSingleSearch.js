@@ -43,7 +43,15 @@ var csdSearch = new AWS.CloudSearchDomain({
 async.parallel([
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'cn'),
+			async.apply(getLatestDataByMarket, 'br'),
+			async.apply(removeData, 'br')
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(getLatestDataByMarket, 'cn'),
 			async.apply(removeData, 'cn')
 		], function(err, result) {
 			console.log(result);
@@ -51,15 +59,7 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'us'),
-			async.apply(removeData, 'us')
-		], function(err, result) {
-			console.log(result);
-		});
-	},
-	function(callback) {
-		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'de'),
+			async.apply(getLatestDataByMarket, 'de'),
 			async.apply(removeData, 'de')
 		], function(err, result) {
 			console.log(result);
@@ -67,7 +67,15 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'in'),
+			async.apply(getLatestDataByMarket, 'es'),
+			async.apply(removeData, 'es')
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(getLatestDataByMarket, 'in'),
 			async.apply(removeData, 'in')
 		], function(err, result) {
 			console.log(result);
@@ -75,12 +83,36 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'int'),
+			async.apply(getLatestDataByMarket, 'int'),
 			async.apply(removeData, 'int')
 		], function(err, result) {
 			console.log(result);
 		});
-	}
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(getLatestDataByMarket, 'jp'),
+			async.apply(removeData, 'jp')
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(getLatestDataByMarket, 'pt'),
+			async.apply(removeData, 'pt')
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(getLatestDataByMarket, 'us'),
+			async.apply(removeData, 'us')
+		], function(err, result) {
+			console.log(result);
+		});
+	},
 ], function(err, results) {
 	if (err) {
 		console.log(err);
@@ -89,13 +121,14 @@ async.parallel([
 	}
 });
 
-function getLatestDatabyLanguage(language, callback) {
+function getLatestDataByMarket(market, callback) {
 	var searchParams = {
-		query: "(and (term field=language '" + language + "'))",
+		//TODO country
+		query: "(and (term field=country '" + market + "'))",
 		queryParser: 'structured',
 		size: 10000,
 	};
-	if (language == 'cn') {
+	if (market == 'br') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -103,7 +136,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'de') {
+	} else if (market == 'cn') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -111,7 +144,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'us') {
+	} else if (market == 'es') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -119,7 +152,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'in') {
+	} else if (market == 'de') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -127,7 +160,31 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'int') {
+	} else if (market == 'in') {
+		csdSearch.search(searchParams, function(err, data) {
+			if (err) {
+				console.log(err, err.stack);
+			} else {
+				callback(null, data.hits.hit);
+			}
+		});
+	} else if (market == 'int') {
+		csdSearch.search(searchParams, function(err, data) {
+			if (err) {
+				console.log(err, err.stack);
+			} else {
+				callback(null, data.hits.hit);
+			}
+		});
+	} else if (market == 'jp') {
+		csdSearch.search(searchParams, function(err, data) {
+			if (err) {
+				console.log(err, err.stack);
+			} else {
+				callback(null, data.hits.hit);
+			}
+		});
+	} else if (market == 'us') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -143,8 +200,13 @@ function removeData(language, data, callback) {
 	var processedResults = addType(data, "delete");
 
 	var batch = prepareBatch(processedResults);
-
-	if (language == 'cn') {
+	if (language == 'br') {
+		csdUpload.uploadDocuments(batch, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done dropping br");
+			callback(null, data);
+		});
+	} else if (language == 'cn') {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done dropping cn");
@@ -157,10 +219,10 @@ function removeData(language, data, callback) {
 			callback(null, data);
 		});
 
-	} else if (language == 'us') {
+	} else if (language == 'es') {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done dropping us");
+			else console.log("done dropping es");
 			callback(null, data);
 		});
 	} else if (language == 'in') {
@@ -173,6 +235,18 @@ function removeData(language, data, callback) {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done dropping int");
+			callback(null, data);
+		});
+	} else if (language == 'jp') {
+		csdUpload.uploadDocuments(batch, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done dropping jp");
+			callback(null, data);
+		});
+	} else if (language == 'us') {
+		csdUpload.uploadDocuments(batch, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done dropping us");
 			callback(null, data);
 		});
 	}
