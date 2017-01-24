@@ -51,16 +51,16 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'us'),
-			async.apply(removeData, 'us')
+			async.apply(getLatestDatabyLanguage, 'de'),
+			async.apply(removeData, 'de')
 		], function(err, result) {
 			console.log(result);
 		});
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(getLatestDatabyLanguage, 'de'),
-			async.apply(removeData, 'de')
+			async.apply(getLatestDatabyLanguage, 'es'),
+			async.apply(removeData, 'es')
 		], function(err, result) {
 			console.log(result);
 		});
@@ -80,7 +80,31 @@ async.parallel([
 		], function(err, result) {
 			console.log(result);
 		});
-	}
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(getLatestDatabyLanguage, 'jp'),
+			async.apply(removeData, 'jp')
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(getLatestDatabyLanguage, 'pt'),
+			async.apply(removeData, 'pt')
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(getLatestDatabyLanguage, 'us'),
+			async.apply(removeData, 'us')
+		], function(err, result) {
+			console.log(result);
+		});
+	},
 ], function(err, results) {
 	if (err) {
 		console.log(err);
@@ -103,7 +127,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'de') {
+	} else if (language == 'es') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -111,7 +135,7 @@ function getLatestDatabyLanguage(language, callback) {
 				callback(null, data.hits.hit);
 			}
 		});
-	} else if (language == 'us') {
+	} else if (language == 'de') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -128,6 +152,30 @@ function getLatestDatabyLanguage(language, callback) {
 			}
 		});
 	} else if (language == 'int') {
+		csdSearch.search(searchParams, function(err, data) {
+			if (err) {
+				console.log(err, err.stack);
+			} else {
+				callback(null, data.hits.hit);
+			}
+		});
+	} else if (language == 'js') {
+		csdSearch.search(searchParams, function(err, data) {
+			if (err) {
+				console.log(err, err.stack);
+			} else {
+				callback(null, data.hits.hit);
+			}
+		});
+	} else if (language == 'pt') {
+		csdSearch.search(searchParams, function(err, data) {
+			if (err) {
+				console.log(err, err.stack);
+			} else {
+				callback(null, data.hits.hit);
+			}
+		});
+	} else if (language == 'us') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -157,7 +205,7 @@ function removeData(language, data, callback) {
 			callback(null, data);
 		});
 
-	} else if (language == 'us') {
+	} else if (language == 'es') {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done dropping us");
@@ -170,6 +218,24 @@ function removeData(language, data, callback) {
 			callback(null, data);
 		});
 	} else if (language == 'int') {
+		csdUpload.uploadDocuments(batch, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done dropping int");
+			callback(null, data);
+		});
+	} else if (language == 'jp') {
+		csdUpload.uploadDocuments(batch, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done dropping int");
+			callback(null, data);
+		});
+	} else if (language == 'pt') {
+		csdUpload.uploadDocuments(batch, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done dropping int");
+			callback(null, data);
+		});
+	} else if (language == 'us') {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done dropping int");

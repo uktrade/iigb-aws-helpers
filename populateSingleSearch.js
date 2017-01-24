@@ -56,9 +56,18 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(createJson, 'us'),
-			async.apply(getDatafromFile, 'us'),
-			async.apply(uploadNewIndex, 'us'),
+			async.apply(createJson, 'de'),
+			async.apply(getDatafromFile, 'de'),
+			async.apply(uploadNewIndex, 'de'),
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(createJson, 'es'),
+			async.apply(getDatafromFile, 'es'),
+			async.apply(uploadNewIndex, 'es'),
 		], function(err, result) {
 			console.log(result);
 		});
@@ -83,9 +92,27 @@ async.parallel([
 	},
 	function(callback) {
 		async.waterfall([
-			async.apply(createJson, 'de'),
-			async.apply(getDatafromFile, 'de'),
-			async.apply(uploadNewIndex, 'de'),
+			async.apply(createJson, 'jp'),
+			async.apply(getDatafromFile, 'jp'),
+			async.apply(uploadNewIndex, 'jp'),
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(createJson, 'pt'),
+			async.apply(getDatafromFile, 'pt'),
+			async.apply(uploadNewIndex, 'pt'),
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
+			async.apply(createJson, 'us'),
+			async.apply(getDatafromFile, 'us'),
+			async.apply(uploadNewIndex, 'us'),
 		], function(err, result) {
 			console.log(result);
 		});
@@ -149,11 +176,10 @@ function uploadNewIndex(language, newdata, callback) {
 			else console.log("done adding new index for de");
 			callback(null, data);
 		});
-
-	} else if (language == 'us') {
+	} else if (language == 'es') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done adding new index for us");
+			else console.log("done adding new index for es");
 			callback(null, data);
 		});
 	} else if (language == 'in') {
@@ -166,6 +192,24 @@ function uploadNewIndex(language, newdata, callback) {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for int");
+			callback(null, data);
+		});
+	} else if (language == 'jp') {
+		csdUpload.uploadDocuments(indexedData, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done adding new index for jp");
+			callback(null, data);
+		});
+	} else if (language == 'pt') {
+		csdUpload.uploadDocuments(indexedData, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done adding new index for pt");
+			callback(null, data);
+		});
+	} else if (language == 'us') {
+		csdUpload.uploadDocuments(indexedData, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done adding new index for us");
 			callback(null, data);
 		});
 	}

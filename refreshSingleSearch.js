@@ -47,82 +47,125 @@ var csdSearch = new AWS.CloudSearchDomain({
 
 
 async.parallel([
-	function(callback) {
-		async.waterfall([
-			async.apply(createJson, 'cn'),
-			async.apply(getDatafromFile, 'cn'),
-			async.apply(uploadNewIndex, 'cn'),
-			getCurrentData,
-			removeData
-		], function(err, result) {
-			if (err) {
-				console.log(err);
-			} else {
-				// console.log(result);
-			}
-		});
-	},
-	function(callback) {
-		async.waterfall([
-			async.apply(createJson, 'us'),
-			async.apply(getDatafromFile, 'us'),
-			async.apply(uploadNewIndex, 'us')
-		], function(err, result) {
-			if (err) {
-				console.log(err);
-			} else {
-				// console.log(result);
-			}
-		});
-	},
-	function(callback) {
-		async.waterfall([
-			async.apply(createJson, 'de'),
-			async.apply(getDatafromFile, 'de'),
-			async.apply(uploadNewIndex, 'de')
-		], function(err, result) {
-			if (err) {
-				console.log(err);
-			} else {
-				// console.log(result);
-			}
-		});
-	},
-	function(callback) {
-		async.waterfall([
-			async.apply(createJson, 'in'),
-			async.apply(getDatafromFile, 'in'),
-			async.apply(uploadNewIndex, 'in')
-		], function(err, result) {
-			if (err) {
-				console.log(err);
-			} else {
-				// console.log(result);
-			}
-		});
-	},
-	function(callback) {
-		async.waterfall([
-			async.apply(createJson, 'int'),
-			async.apply(getDatafromFile, 'int'),
-			async.apply(uploadNewIndex, 'int'),
-		], function(err, result) {
-			if (err) {
-				console.log(err);
-			} else {
-				// console.log(result);
-			}
-		});
-	}
-], function(err, results) {
-	if (err) {
-		console.log(err);
-		process.exit(1);
-	} else {
-		console.log("search successfully refreshed");
-	}
-	// removeTempFiles();
-});
+		function(callback) {
+			async.waterfall([
+				async.apply(createJson, 'cn'),
+				async.apply(getDatafromFile, 'cn'),
+				async.apply(uploadNewIndex, 'cn'),
+				getCurrentData,
+				removeData
+			], function(err, result) {
+				if (err) {
+					console.log(err);
+				} else {
+					// console.log(result);
+				}
+			});
+		},
+
+		function(callback) {
+			async.waterfall([
+				async.apply(createJson, 'de'),
+				async.apply(getDatafromFile, 'de'),
+				async.apply(uploadNewIndex, 'de')
+			], function(err, result) {
+				if (err) {
+					console.log(err);
+				} else {
+					// console.log(result);
+				}
+			});
+		},
+		function(callback) {
+			async.waterfall([
+				async.apply(createJson, 'es'),
+				async.apply(getDatafromFile, 'es'),
+				async.apply(uploadNewIndex, 'es')
+			], function(err, result) {
+				if (err) {
+					console.log(err);
+				} else {
+					// console.log(result);
+				}
+			});
+		},
+		function(callback) {
+			async.waterfall([
+				async.apply(createJson, 'in'),
+				async.apply(getDatafromFile, 'in'),
+				async.apply(uploadNewIndex, 'in')
+			], function(err, result) {
+				if (err) {
+					console.log(err);
+				} else {
+					// console.log(result);
+				}
+			});
+		},
+		function(callback) {
+			async.waterfall([
+				async.apply(createJson, 'int'),
+				async.apply(getDatafromFile, 'int'),
+				async.apply(uploadNewIndex, 'int'),
+			], function(err, result) {
+				if (err) {
+					console.log(err);
+				} else {
+					// console.log(result);
+				}
+			});
+		},
+		function(callback) {
+			async.waterfall([
+				async.apply(createJson, 'jp'),
+				async.apply(getDatafromFile, 'jp'),
+				async.apply(uploadNewIndex, 'jp')
+			], function(err, result) {
+				if (err) {
+					console.log(err);
+				} else {
+					// console.log(result);
+				}
+			});
+		},
+
+		function(callback) {
+			async.waterfall([
+				async.apply(createJson, 'pt'),
+				async.apply(getDatafromFile, 'pt'),
+				async.apply(uploadNewIndex, 'pt')
+			], function(err, result) {
+				if (err) {
+					console.log(err);
+				} else {
+					// console.log(result);
+				}
+			});
+		},
+		function(callback) {
+			async.waterfall([
+				async.apply(createJson, 'us'),
+				async.apply(getDatafromFile, 'us'),
+				async.apply(uploadNewIndex, 'us')
+			], function(err, result) {
+				if (err) {
+					console.log(err);
+				} else {
+					// console.log(result);
+				}
+			});
+
+		}
+	],
+	function(err, results) {
+		if (err) {
+			console.log(err);
+			process.exit(1);
+		} else {
+			console.log("search successfully refreshed");
+		}
+		// removeTempFiles();
+	});
 
 
 function createJson(language, callback) {
@@ -175,11 +218,10 @@ function uploadNewIndex(language, newdata, callback) {
 			else console.log("added new de data to index");
 			callback(null, version);
 		});
-
-	} else if (language == 'us') {
+	} else if (language == 'es') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("added new us data to index");
+			else console.log("added new es data to index");
 			callback(null, version);
 		});
 	} else if (language == 'in') {
@@ -194,8 +236,25 @@ function uploadNewIndex(language, newdata, callback) {
 			else console.log("added new int data to index");
 			callback(null, version);
 		});
+	} else if (language == 'jp') {
+		csdUpload.uploadDocuments(indexedData, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("added new jp data to index");
+			callback(null, version);
+		});
+	} else if (language == 'pt') {
+		csdUpload.uploadDocuments(indexedData, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("added new jp data to index");
+			callback(null, version);
+		});
+	} else if (language == 'us') {
+		csdUpload.uploadDocuments(indexedData, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("added new us data to index");
+			callback(null, version);
+		});
 	}
-
 }
 
 function getCurrentData(version, callback) {
