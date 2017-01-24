@@ -11,10 +11,10 @@ var enquiriesFolder = '/enquiries/';
 var termsFolder = '/terms-and-conditions/';
 var privacyFolder = '/privacy-policy/';
 
-var searchDomain = process.env.AWS_CS_SEARCH;
-var uploadDomain = process.env.AWS_CS_UPLOAD;
-var aws_access_key = process.env.AWS_ACCESS_KEY_ID_IIGB_SEARCH_UPDATER;
-var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY_IIGB_SEARCH_UPDATER;
+var searchDomain = process.env.AWS_CS_SEARCH_STAGING;
+var uploadDomain = process.env.AWS_CS_UPLOAD_STAGING;
+var aws_access_key = process.env.AWS_ACCESS_KEY_STAGING;
+var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY_STAGING;
 
 
 AWS.config.apiVersions = {
@@ -45,6 +45,15 @@ var csdSearch = new AWS.CloudSearchDomain({
 });
 
 async.parallel([
+	function(callback) {
+		async.waterfall([
+			async.apply(createJson, 'br'),
+			async.apply(getDatafromFile, 'br'),
+			async.apply(uploadNewIndex, 'br'),
+		], function(err, result) {
+			console.log(result);
+		});
+	},
 	function(callback) {
 		async.waterfall([
 			async.apply(createJson, 'cn'),
@@ -164,7 +173,13 @@ function uploadNewIndex(language, newdata, callback) {
 
 	var indexedData = addTimestamp(formattedData);
 
-	if (language == 'cn') {
+	if (language == 'br') {
+		csdUpload.uploadDocuments(indexedData, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done adding new index for br");
+			callback(null, data);
+		});
+	} else if (language == 'cn') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for cn");

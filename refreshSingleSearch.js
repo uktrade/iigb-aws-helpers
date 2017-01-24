@@ -49,6 +49,21 @@ var csdSearch = new AWS.CloudSearchDomain({
 async.parallel([
 		function(callback) {
 			async.waterfall([
+				async.apply(createJson, 'br'),
+				async.apply(getDatafromFile, 'br'),
+				async.apply(uploadNewIndex, 'br'),
+				getCurrentData,
+				removeData
+			], function(err, result) {
+				if (err) {
+					console.log(err);
+				} else {
+					// console.log(result);
+				}
+			});
+		},
+		function(callback) {
+			async.waterfall([
 				async.apply(createJson, 'cn'),
 				async.apply(getDatafromFile, 'cn'),
 				async.apply(uploadNewIndex, 'cn'),
@@ -62,7 +77,6 @@ async.parallel([
 				}
 			});
 		},
-
 		function(callback) {
 			async.waterfall([
 				async.apply(createJson, 'de'),
@@ -206,7 +220,13 @@ function uploadNewIndex(language, newdata, callback) {
 
 	var version = getDataVersion(indexedData);
 
-	if (language == 'cn') {
+	if (language == 'br') {
+		csdUpload.uploadDocuments(indexedData, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("added new br data to index");
+			callback(null, version);
+		});
+	} else if (language == 'cn') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("added new cn data to index");

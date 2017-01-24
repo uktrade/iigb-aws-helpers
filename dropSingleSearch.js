@@ -7,10 +7,10 @@ var async = require('async');
 
 var path = process.argv[2];
 
-var searchDomain = process.env.AWS_CS_SEARCH;
-var uploadDomain = process.env.AWS_CS_UPLOAD;
-var aws_access_key = process.env.AWS_ACCESS_KEY_ID_IIGB_SEARCH_UPDATER;
-var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY_IIGB_SEARCH_UPDATER;
+var searchDomain = process.env.AWS_CS_SEARCH_STAGING;
+var uploadDomain = process.env.AWS_CS_UPLOAD_STAGING;
+var aws_access_key = process.env.AWS_ACCESS_KEY_STAGING;
+var aws_secret_key = process.env.AWS_SECRET_ACCESS_KEY_STAGING;
 
 
 AWS.config.apiVersions = {
@@ -41,6 +41,14 @@ var csdSearch = new AWS.CloudSearchDomain({
 });
 
 async.parallel([
+	function(callback) {
+		async.waterfall([
+			async.apply(getLatestDatabyLanguage, 'br'),
+			async.apply(removeData, 'br')
+		], function(err, result) {
+			console.log(result);
+		});
+	},
 	function(callback) {
 		async.waterfall([
 			async.apply(getLatestDatabyLanguage, 'cn'),
@@ -119,7 +127,15 @@ function getLatestDatabyLanguage(language, callback) {
 		queryParser: 'structured',
 		size: 10000,
 	};
-	if (language == 'cn') {
+	if (language == 'br') {
+		csdSearch.search(searchParams, function(err, data) {
+			if (err) {
+				console.log(err, err.stack);
+			} else {
+				callback(null, data.hits.hit);
+			}
+		});
+	} else if (language == 'cn') {
 		csdSearch.search(searchParams, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
@@ -191,8 +207,13 @@ function removeData(language, data, callback) {
 	var processedResults = addType(data, "delete");
 
 	var batch = prepareBatch(processedResults);
-
-	if (language == 'cn') {
+	if (language == 'br') {
+		csdUpload.uploadDocuments(batch, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done dropping br");
+			callback(null, data);
+		});
+	} else if (language == 'cn') {
 		csdUpload.uploadDocuments(batch, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done dropping cn");
