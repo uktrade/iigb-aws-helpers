@@ -42,7 +42,7 @@ function main() {
         local url=${BASH_REMATCH[6]}
         saved_bytes=$((saved_bytes+ input_size - output_size))
         printf "(%s)\t\tratio:%s\t%skb -> %skb" "${width}x${height}" \
-        "$ratio" $((input_size/1000)) $((output_size/1000))
+        "$ratio" $((input_size/1024)) $((output_size/1024))
         __download_shrinked "$url" "$image" || \
           { printf "Failed downloading \n"; continue; }
         echo
@@ -52,7 +52,7 @@ function main() {
       fi
   done
 
-  printf "Total shrink size: %sKB \n" $((saved_bytes/1000))
+  printf "Total shrink size: %sKB \n" $((saved_bytes/1024))
 }
 
 main
