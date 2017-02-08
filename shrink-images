@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+shopt -s nullglob
+IFS=$'\n\t'
+
+api_key="${1:-}"
+path="${2:-}"
+output_pattern=$'input:size:(.*),type:.*,output:size:(.*),type:.*,width:(.*),height:(.*),ratio:(.*),url:(.*)'
+
+if [[ -z $api_key ]] || [[ -z $path ]]; then
+   echo "Usage: shrink-images <api-key> <root-path>"
+   exit 1
+fi
+
+function __shrink_image() {
+  echo $(curl -sS --user api:"$api_key" \
+    --data-binary @"$1" https://api.tinify.com/shrink 2>&1)
+}
+
+function __download_shrinked() {
+  wget "$1" -O "$2" -o "image_download.log"
+}
+
+
+function main() {
+  local output
+  for image in "${path}"/**/*.{jpg,png}; do
+      failed=false
+      printf "Shrink %s:" "$image"
+
+      output=$(__shrink_image "$image")
+
+      output="${output//[\{\}\"]/}"
+
+      if [[ $output =~ $output_pattern ]]; then
+        local input_size=${BASH_REMATCH[1]}
+        local output_size=${BASH_REMATCH[2]}
+        local width=${BASH_REMATCH[3]}
+        local height=${BASH_REMATCH[4]}
+        local ratio=${BASH_REMATCH[5]}
+        local url=${BASH_REMATCH[6]}
+        __download_shrinked "$url" "$image"
+        printf "(%s) %skb -> %skb ratio:%s" "${width}x${height}" \
+        $((input_size/1000)) $((output_size/1000)) "$ratio"
+        echo
+
+      else
+        printf "$output"; echo
+      fi
+
+
+  done
+}
+
+main
