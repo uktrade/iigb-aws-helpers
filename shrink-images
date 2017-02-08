@@ -24,6 +24,7 @@ function __download_shrinked() {
 
 function main() {
   local output
+  local saved_bytes=0
   for image in "${path}"/**/*.{jpg,png}; do
       failed=false
       printf "Shrink %s:" "$image"
@@ -40,6 +41,7 @@ function main() {
         local ratio=${BASH_REMATCH[5]}
         local url=${BASH_REMATCH[6]}
         __download_shrinked "$url" "$image"
+        saved_bytes=$((saved_bytes+ input_size - output_size))
         printf "(%s) %skb -> %skb ratio:%s" "${width}x${height}" \
         $((input_size/1000)) $((output_size/1000)) "$ratio"
         echo
@@ -47,9 +49,9 @@ function main() {
       else
         printf "$output"; echo
       fi
-
-
   done
+
+  printf "Total shrink size: %sKB \n" $((saved_bytes/1000))
 }
 
 main
