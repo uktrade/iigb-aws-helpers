@@ -40,10 +40,11 @@ function main() {
         local height=${BASH_REMATCH[4]}
         local ratio=${BASH_REMATCH[5]}
         local url=${BASH_REMATCH[6]}
-        __download_shrinked "$url" "$image"
         saved_bytes=$((saved_bytes+ input_size - output_size))
-        printf "(%s) %skb -> %skb ratio:%s" "${width}x${height}" \
-        $((input_size/1000)) $((output_size/1000)) "$ratio"
+        printf "(%s)\t\tratio:%s\t%skb -> %skb" "${width}x${height}" \
+        "$ratio" $((input_size/1000)) $((output_size/1000))
+        __download_shrinked "$url" "$image" || \
+          { printf "Failed downloading \n"; continue; }
         echo
 
       else
