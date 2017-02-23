@@ -5,6 +5,7 @@ echo "Deploying..."
 function verify {
     [ -z "$BUCKET" ] && echo "No S3 bucket specified for deployment, please set BUCKET" && exit 1
 
+
     if [ -z "$REGION" ]; then
       echo "AWS region not set, using eu-west-1" && REGION="eu-west-1"
     else
@@ -30,9 +31,16 @@ function deploy {
         cp "$dir"/norobots.txt "$PWD"/"$BUILD_FOLDER"/robots.txt
     fi
 
-    aws s3 sync "$PWD"/"${BUILD_FOLDER}/assets" s3://"${BUCKET}/assets" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --cache-control="max-age=604800"
+    if [[ $NO_CACHE == true ]]; then
+         echo "Deploying WITHOUT cache headers"
+        aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY
+    else
+         echo "Deploying WITH cache headers"
+        aws s3 sync "$PWD"/"${BUILD_FOLDER}/assets" s3://"${BUCKET}/assets" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --cache-control="max-age=604800"
 
-    aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --exclude 'assets/*' --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --cache-control="max-age=1800"
+        aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --exclude 'assets/*' --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --cache-control="max-age=1800"
+    fi
+
 
 
 
