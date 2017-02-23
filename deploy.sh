@@ -32,10 +32,10 @@ function deploy {
     fi
 
     if [ "$NO_CACHE" = "true" ]; then
-         echo "Deploying WITHOUT cache headers"
+        echo "Deploying WITHOUT cache headers"
         aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY
     else
-         echo "Deploying WITH cache headers"
+        echo "Deploying WITH cache headers"
         aws s3 sync "$PWD"/"${BUILD_FOLDER}/assets" s3://"${BUCKET}/assets" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --cache-control="max-age=604800"
 
         aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --exclude 'assets/*' --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --cache-control="max-age=1800"
