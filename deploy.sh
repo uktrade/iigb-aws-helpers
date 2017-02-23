@@ -31,7 +31,7 @@ function deploy {
         cp "$dir"/norobots.txt "$PWD"/"$BUILD_FOLDER"/robots.txt
     fi
 
-    if [[ $NO_CACHE == true ]]; then
+    if [ "$NO_CACHE" = "true" ]; then
          echo "Deploying WITHOUT cache headers"
         aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY
     else
