@@ -47,6 +47,15 @@ var csdSearch = new AWS.CloudSearchDomain({
 async.parallel([
 	function(callback) {
 		async.waterfall([
+			async.apply(createJson, 'ar'),
+			async.apply(getDatafromFile, 'ar'),
+			async.apply(uploadNewIndex, 'ar'),
+		], function(err, result) {
+			console.log(result);
+		});
+	},
+	function(callback) {
+		async.waterfall([
 			async.apply(createJson, 'br'),
 			async.apply(getDatafromFile, 'br'),
 			async.apply(uploadNewIndex, 'br'),
@@ -164,7 +173,13 @@ function uploadNewIndex(market, newdata, callback) {
 
 	var indexedData = addTimestamp(formattedData);
 
-	if (market == 'br') {
+	if (market == 'ar') {
+		csdUpload.uploadDocuments(indexedData, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else console.log("done adding new index for ar");
+			callback(null, data);
+		});
+	} else if (market == 'br') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
 			else console.log("done adding new index for br");
