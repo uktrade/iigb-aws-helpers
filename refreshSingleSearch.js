@@ -230,7 +230,7 @@ function uploadNewIndex(market, newdata, callback) {
 	} else if (market == 'br') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("added new cn data to index");
+			else console.log("added new br data to index");
 			callback(null, version);
 		});
 	} else if (market == 'cn') {

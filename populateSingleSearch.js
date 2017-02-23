@@ -176,13 +176,13 @@ function uploadNewIndex(market, newdata, callback) {
 	if (market == 'ar') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done adding new index for br");
+			else console.log("done adding new index for ar");
 			callback(null, data);
 		});
 	} else if (market == 'br') {
 		csdUpload.uploadDocuments(indexedData, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
-			else console.log("done adding new index for cn");
+			else console.log("done adding new index for br");
 			callback(null, data);
 		});
 	} else if (market == 'cn') {
