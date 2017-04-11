@@ -31,11 +31,11 @@ function deploy {
         cp "$dir"/norobots.txt "$PWD"/"$BUILD_FOLDER"/robots.txt
     fi
 
-        aws s3 sync "$PWD"/"${BUILD_FOLDER}/assets" s3://"${BUCKET}/assets" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --cache-control="max-age=604800"
+        aws s3 sync "$PWD/${BUILD_FOLDER}/assets" s3://"${BUCKET}/assets" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --cache-control="max-age=604800"
 
     if [ "$NO_CACHE" = "true" ]; then
         echo "Deploying index files with 0(zero) cache"
-        aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY
+        aws s3 sync "$PWD"/"$BUILD_FOLDER" s3://"$BUCKET" --region="$REGION" --delete --storage-class REDUCED_REDUNDANCY --cache-control="max-age=0"
     else
         echo "Deploying index files with 5 mins cache"
 
